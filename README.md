@@ -27,3 +27,6 @@ Verifique o YAML no Code do Repositorio
 ```
 azure-pipelines.yml
 ```
+## Documentação Referência
+
+[Define a webhooks resource](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/resources?view=azure-devops&tabs=schema#define-a-webhooks-resource)
