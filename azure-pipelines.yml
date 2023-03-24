@@ -1,0 +1,26 @@
+trigger:
+- none
+
+resources:
+  webhooks:
+  - webhook: PRCompleted
+    connection: PRCompleted
+    filters:  
+    - path: "eventType"
+      value: "git.pullrequest.merged"
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: echo ${{ parameters.PRCompleted.resource.pullRequestId }}
+  displayName: 'Show Pull Request Id'
+- script: |
+    az devops configure --defaults organization=$(System.TeamFoundationCollectionUri) project=$(System.TeamProject)
+    workItemRef=$(az repos pr show --id ${{ parameters.PRCompleted.resource.pullRequestId }} --detect true --org $(System.TeamFoundationCollectionUri))
+    workItemId=$(echo $workItemRef | jq -r '.workItemRefs[0].id')
+    az boards work-item update --id "$workItemId" --state "Resolved"
+    echo $workItemId
+  displayName: Change Work Item State
+  env:
+    AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
